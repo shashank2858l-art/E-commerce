@@ -20,7 +20,7 @@ exports.getAllListings = getAllListings;
 const createListing = async (req, res) => {
     const { owner_id, title, description, category, condition, listing_type, image_url } = req.body;
     const { data, error } = await supabase_1.supabase.from('item_listings').insert([{
-            owner_id, title, description, category, condition, listing_type, image_url
+            owner_id, title, description, category, condition, listing_type, image_url, status: 'pending'
         }]).select().single();
     if (error)
         return res.status(400).json({ error: error.message });

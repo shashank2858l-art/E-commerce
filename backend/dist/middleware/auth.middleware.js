@@ -31,7 +31,7 @@ const requireAuth = async (req, res, next) => {
             };
             const { data: newProfile, error: insertError } = await supabaseClient_1.supabaseAdmin
                 .from('profiles')
-                .insert([newProfileInfo])
+                .upsert([newProfileInfo], { onConflict: 'id' })
                 .select()
                 .single();
             if (insertError) {
