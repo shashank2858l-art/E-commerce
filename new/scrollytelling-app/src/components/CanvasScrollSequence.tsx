@@ -76,8 +76,8 @@ export default function CanvasScrollSequence() {
       renderFrame(0);
       const handleResize = () => requestAnimationFrame(() => renderFrame(Math.floor(scrollYProgress.get() * TOTAL_FRAMES)));
       window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded]);
 
   return (
@@ -104,6 +104,7 @@ export default function CanvasScrollSequence() {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function TextOverlay({ scrollYProgress }: { scrollYProgress: any }) {
   return (
     <div className="w-full h-full relative text-white/90 font-sans mx-auto max-w-7xl px-8 sm:px-12">

@@ -77,8 +77,8 @@ export default function ChairCanvasScrollSequence() {
       renderFrame(0);
       const handleResize = () => requestAnimationFrame(() => renderFrame(Math.floor(scrollYProgress.get() * TOTAL_FRAMES)));
       window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded]);
 
   return (
@@ -105,6 +105,7 @@ export default function ChairCanvasScrollSequence() {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function TextOverlay({ scrollYProgress }: { scrollYProgress: any }) {
   return (
     <div className="w-full h-full relative text-white/90 font-sans mx-auto max-w-7xl px-8 sm:px-12">
@@ -139,7 +140,7 @@ function TextOverlay({ scrollYProgress }: { scrollYProgress: any }) {
         <div className="w-12 h-[2px] bg-[#00FF9C] mb-6"></div>
         <h2 className="text-3xl sm:text-5xl md:text-6xl font-bold mb-4 tracking-tight">Adaptive Lumbar</h2>
         <p className="text-base sm:text-lg text-white/60 max-w-xs leading-relaxed">
-          Dynamic multi-axis lower back support that shifts fluidly with your spine's natural curvature.
+          Dynamic multi-axis lower back support that shifts fluidly with your spine&apos;s natural curvature.
         </p>
       </motion.div>
 
