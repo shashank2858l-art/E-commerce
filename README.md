@@ -35,6 +35,28 @@ d:\work\e-commerce\
 
 ---
 
+## Environment Variables
+
+Before running the application, make sure you configure your `.env` files appropriately in both the root/backend and frontend. 
+
+**For Backend (`backend/.env`):**
+```env
+PORT=5000
+SUPABASE_URL=YOUR_SUPABASE_URL
+SUPABASE_SERVICE_ROLE_KEY=YOUR_SERVICE_KEY
+```
+
+**For Frontend (`frontend/.env.local`):**
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+NEXT_PUBLIC_SUPABASE_URL=YOUR_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
+NEXT_PUBLIC_ADMIN_EMAIL=admin@reusemart.com
+NEXT_PUBLIC_ADMIN_PASSWORD=supersecretadmin
+```
+
+---
+
 ## Run Commands
 
 To run the full suite locally, you need to start the development servers for all three applications in separate terminal windows. 
