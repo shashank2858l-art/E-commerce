@@ -59,7 +59,7 @@ export default function Testimonials() {
                 </div>
               </div>
               <p className="text-muted-dim text-sm italic leading-relaxed">
-                "{t.review}"
+                &quot;{t.review}&quot;
               </p>
             </motion.div>
           ))}

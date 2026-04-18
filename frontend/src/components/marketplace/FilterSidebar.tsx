@@ -37,6 +37,7 @@ const CATEGORIES = [
 export default function FilterSidebar({ filters, setFilters, isOpen, onClose }: FilterSidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updateFilter = (key: keyof FilterState, value: any) => {
     setFilters(prev => ({ ...prev, [key]: value }));
   };

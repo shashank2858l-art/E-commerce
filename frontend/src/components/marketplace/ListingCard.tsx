@@ -72,6 +72,7 @@ export default function ListingCard({ item, onClick, onAction, userTier, index =
       {/* Image */}
       <div className="relative h-48 bg-surface-high flex items-center justify-center overflow-hidden">
         {imgSrc ? (
+          // eslint-disable-next-line @next/next/no-img-element
           <img 
             src={imgSrc} 
             alt={item.title}

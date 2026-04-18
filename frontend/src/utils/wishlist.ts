@@ -16,7 +16,7 @@ export function getWishlistItems(): ListingItem[] {
   try {
     const raw = localStorage.getItem(getWishlistKey());
     return raw ? JSON.parse(raw) : [];
-  } catch (e) {
+  } catch {
     return [];
   }
 }
