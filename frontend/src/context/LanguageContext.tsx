@@ -22,6 +22,7 @@ const dict: Translations = {
   nav_dash: { en: 'Dashboard', hi: 'डैशबोर्ड', kn: 'ಡ್ಯಾಶ್‌ಬೋರ್ಡ್' },
   nav_wishlist: { en: 'Wishlist', hi: 'विशलिस्ट', kn: 'ಇಷ್ಟ-ಪಟ್ಟಿ' },
   nav_cart: { en: 'Cart', hi: 'कार्ट', kn: 'ಕಾರ್ಟ್' },
+  nav_new_appearance: { en: 'New Appearance', hi: 'नया रूप', kn: 'ಹೊಸ ನೋಟ' },
   nav_list: { en: 'Explore Map', hi: 'एक्सप्लोर मैप', kn: 'ನಕ್ಷೆಯನ್ನು ಅನ್ವೇಷಿಸಿ' },
 
   // Impact Stats
