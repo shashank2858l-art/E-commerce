@@ -14,7 +14,7 @@ const navKeys = [
   { href: '/', labelKey: 'nav_home' },
   { href: '/about', labelKey: 'nav_about' },
   { href: '/marketplace', labelKey: 'nav_market' },
-  { href: 'http://localhost:3001', labelKey: 'nav_new_appearance', external: true },
+  { href: process.env.NEXT_PUBLIC_HOT_DEALS_API_URL || 'http://localhost:3001', labelKey: 'nav_new_appearance', external: true },
   { href: '/dashboard', labelKey: 'nav_dash', authRequired: true },
   { href: '/wishlist', labelKey: 'nav_wishlist', authRequired: true },
   { href: '/cart', labelKey: 'nav_cart', authRequired: true },
