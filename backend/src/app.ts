@@ -12,6 +12,10 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'Sustainable E-Commerce + Circular Economy API is running', timestamp: new Date() });
 });
 
+app.get('/', (req, res) => {
+  res.json({ message: 'Welcome to the E-Commerce API. The API is running successfully.' });
+});
+
 import userRoutes from './routes/users';
 import listingsRoutes from './routes/listings';
 import requestsRoutes from './routes/requests';
