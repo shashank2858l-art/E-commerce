@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 
 const app = express();
+app.set('trust proxy', 1); // Trust Render proxy for correct req.protocol (https)
 
 app.use(cors());
 app.use(express.json());

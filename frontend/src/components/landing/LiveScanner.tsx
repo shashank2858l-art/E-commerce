@@ -25,7 +25,8 @@ export default function LiveScanner({ onClose }: { onClose: () => void }) {
       const id = decodedText.split(':')[1];
       try {
         // Fetch specific product to display inline!
-        const res = await fetch(`http://localhost:5001/api/listings`);
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api';
+        const res = await fetch(`${baseUrl}/listings`);
         const data = await res.json();
         const found = data.data?.find((i:any) => i.id === id);
         if (found) {
