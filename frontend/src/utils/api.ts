@@ -1,6 +1,7 @@
 import { supabase } from './supabase';
 
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const rawUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+export const API_URL = rawUrl.endsWith('/api') ? rawUrl : `${rawUrl.replace(/\/$/, '')}/api`;
 
 export async function fetchFromApi(endpoint: string, options: RequestInit = {}) {
   try {
