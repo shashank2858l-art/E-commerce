@@ -2,7 +2,7 @@
 
 import { ListingItem } from '@/types';
 import { motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { addToWishlist, removeFromWishlist, isInWishlist } from '@/utils/wishlist';
 import { useCurrency } from '@/context/CurrencyContext';
 
@@ -17,7 +17,7 @@ const typeConfig: Record<string, { color: string; label: string; badge: string }
 
 import { API_URL } from '@/utils/api';
 
-export default function ListingCard({ item, onClick, onAction, userTier, index = 0 }: { item: ListingItem & { distance?: string, trustRating?: number, ecoNote?: string, swapFor?: string }, onClick?: () => void; onAction?: () => void; userTier?: string; index?: number }) {
+const ListingCard = memo(function ListingCard({ item, onClick, onAction, userTier, index = 0 }: { item: ListingItem & { distance?: string, trustRating?: number, ecoNote?: string, swapFor?: string }, onClick?: () => void; onAction?: () => void; userTier?: string; index?: number }) {
   const { formatPrice } = useCurrency();
   const config = typeConfig[item.type] || typeConfig['buy'];
   const isLocked = item.isEarlyAccess && userTier === 'bronze'; // mock logic
@@ -70,7 +70,7 @@ export default function ListingCard({ item, onClick, onAction, userTier, index =
       )}
 
       {/* Image */}
-      <div className="relative h-48 bg-surface-high flex items-center justify-center overflow-hidden">
+      <div className="relative h-36 sm:h-44 lg:h-48 bg-surface-high flex items-center justify-center overflow-hidden">
         {imgSrc ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img 
@@ -139,9 +139,9 @@ export default function ListingCard({ item, onClick, onAction, userTier, index =
       </div>
 
       {/* Content */}
-      <div className="p-5">
+      <div className="p-3 sm:p-4 lg:p-5">
         <div className="flex items-start justify-between gap-3 mb-2">
-          <h3 className="font-heading text-base font-semibold group-hover:text-neon-green transition-colors line-clamp-1">
+          <h3 className="font-heading text-sm sm:text-base font-semibold group-hover:text-neon-green transition-colors line-clamp-1">
             {item.title}
           </h3>
           <div className="flex flex-col items-end">
@@ -166,12 +166,12 @@ export default function ListingCard({ item, onClick, onAction, userTier, index =
           </div>
         </div>
 
-        <p className="text-xs text-muted line-clamp-2 mb-3 leading-relaxed">
+        <p className="text-[10px] sm:text-xs text-muted line-clamp-2 mb-2 sm:mb-3 leading-relaxed">
           {item.description?.replace(/\[S_NAME:.*?\]|\[S_WA:.*?\]|\[S_LOC:.*?\]/g, '')}
         </p>
 
         {/* Meta row */}
-        <div className="flex items-center gap-3 text-xs text-muted-dim">
+        <div className="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs text-muted-dim flex-wrap">
           <span className="flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full" style={{ background: config.color }} />
             {item.category}
@@ -289,4 +289,6 @@ export default function ListingCard({ item, onClick, onAction, userTier, index =
       </div>
     </motion.div>
   );
-}
+});
+
+export default ListingCard;

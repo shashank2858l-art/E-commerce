@@ -41,7 +41,7 @@ export default function ImpactStats() {
   ];
 
   return (
-    <section className="py-24 relative" ref={ref}>
+    <section className="py-12 sm:py-16 lg:py-24 relative" ref={ref}>
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-neon-green/[0.02] to-transparent pointer-events-none" />
       <div className="section-container relative z-10">
         <motion.div
@@ -50,13 +50,13 @@ export default function ImpactStats() {
           viewport={{ once: true }}
           className="text-center mb-14"
         >
-          <h2 className="font-heading text-4xl lg:text-5xl font-bold">
+          <h2 className="font-heading text-2xl sm:text-3xl lg:text-5xl font-bold">
             {t('imp_title1')} <span className="gradient-text-warm">{t('imp_title2')}</span>
           </h2>
-          <p className="text-muted mt-3">{t('imp_desc')}</p>
+          <p className="text-muted mt-2 sm:mt-3 text-sm sm:text-base">{t('imp_desc')}</p>
         </motion.div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
           {stats.map((stat, i) => (
             <motion.div
               key={i}
@@ -64,11 +64,11 @@ export default function ImpactStats() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="glass rounded-2xl p-6 text-center group hover:border-white/10 transition-all duration-300"
+              className="glass rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 text-center group hover:border-white/10 transition-all duration-300"
             >
-              <span className="text-3xl block mb-3">{stat.icon}</span>
+              <span className="text-xl sm:text-2xl lg:text-3xl block mb-1 sm:mb-2 lg:mb-3">{stat.icon}</span>
               <span
-                className="font-heading text-3xl lg:text-4xl font-bold block"
+                className="font-heading text-xl sm:text-2xl lg:text-4xl font-bold block"
                 style={{ color: stat.color }}
               >
                 <AnimatedCounter target={stat.value} suffix={stat.suffix} inView={inView} />

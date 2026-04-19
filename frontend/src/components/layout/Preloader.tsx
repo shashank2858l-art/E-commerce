@@ -11,7 +11,7 @@ export default function Preloader() {
 
   useEffect(() => {
     // Generate scattered particles
-    const arr = Array.from({ length: 40 }).map((_, i) => {
+    const arr = Array.from({ length: 20 }).map((_, i) => {
       const angle = Math.random() * Math.PI * 2;
       const dist = Math.random() * 250 + 100;
       return {

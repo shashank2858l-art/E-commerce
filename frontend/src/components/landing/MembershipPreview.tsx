@@ -55,26 +55,26 @@ export default function MembershipPreview() {
   }, []);
 
   return (
-    <section className="py-24 relative overflow-hidden bg-background">
+    <section className="py-12 sm:py-16 lg:py-24 relative overflow-hidden bg-background">
       <div className="section-container relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-8 sm:mb-12 lg:mb-16"
         >
           <span className="inline-block text-xs font-heading font-semibold tracking-[4px] uppercase text-accent-purple mb-4 px-4 py-1 rounded-full bg-accent-purple/10 border border-accent-purple/30 shadow-[0_0_15px_rgba(191,90,242,0.2)]">
             {t('mem_prev_badge')}
           </span>
-          <h2 className="font-heading text-4xl lg:text-6xl font-bold mt-4 drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]">
+          <h2 className="font-heading text-2xl sm:text-4xl lg:text-6xl font-bold mt-4 drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]">
             {t('mem_prev_title1')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-purple to-accent-teal">{t('mem_prev_title2')}</span>
           </h2>
-          <p className="text-muted mt-4 max-w-2xl mx-auto text-lg leading-relaxed">
+          <p className="text-muted mt-3 sm:mt-4 max-w-2xl mx-auto text-sm sm:text-base lg:text-lg leading-relaxed px-2 sm:px-0">
             {t('mem_prev_desc')}
           </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto items-center">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto items-stretch">
           {tiers.map((tier, i) => (
             <motion.div
               key={tier.name}
@@ -82,7 +82,7 @@ export default function MembershipPreview() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.2 }}
-              className={`relative glass rounded-3xl p-8 border ${tier.popular ? 'border-neon-green/40 shadow-[0_0_40px_rgba(57,255,20,0.15)] scale-105' : 'border-white/10'} group hover:-translate-y-2 transition-all duration-300`}
+              className={`relative glass rounded-2xl sm:rounded-3xl p-5 sm:p-6 lg:p-8 border ${tier.popular ? 'border-neon-green/40 shadow-[0_0_40px_rgba(57,255,20,0.15)] sm:scale-105' : 'border-white/10'} group hover:-translate-y-2 transition-all duration-300`}
             >
               {tier.popular && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-neon-green text-black text-[10px] font-heading font-black tracking-widest px-4 py-1.5 rounded-full uppercase shadow-[0_0_15px_rgba(57,255,20,0.5)]">
@@ -95,7 +95,7 @@ export default function MembershipPreview() {
                 style={{ background: `radial-gradient(circle at top right, ${tier.glow}1), transparent 70%)` }}
               />
 
-              <h3 className="font-heading text-3xl font-black text-white relative z-10">{tier.name}</h3>
+              <h3 className="font-heading text-2xl sm:text-3xl font-black text-white relative z-10">{tier.name}</h3>
               <div className="mt-2 mb-8 relative z-10">
                 <span className="text-sm text-muted-dim">Required Score: </span>
                 <span className="font-heading tracking-widest font-bold" style={{ color: `${tier.glow}1)` }}>{tier.scoreReq}</span>

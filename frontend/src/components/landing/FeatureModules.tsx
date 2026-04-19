@@ -2,6 +2,7 @@
 
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 
 export default function FeatureModules() {
@@ -38,7 +39,7 @@ export default function FeatureModules() {
   ];
 
   return (
-    <section className="py-24 relative overflow-hidden">
+    <section className="py-12 sm:py-16 lg:py-24 relative overflow-hidden">
       {/* Subtle background glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-[500px] bg-neon-green/5 blur-[150px] pointer-events-none" />
 
@@ -47,20 +48,20 @@ export default function FeatureModules() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
-          className="text-center mb-16"
+          className="text-center mb-8 sm:mb-12 lg:mb-16"
         >
           <span className="inline-block text-xs font-heading font-semibold tracking-[4px] uppercase text-white mb-4 px-4 py-1 rounded-full bg-white/10 border border-white/20 backdrop-blur-md">
             {t('feat_badge')}
           </span>
-          <h2 className="font-heading text-4xl lg:text-6xl font-bold mt-4 drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">
+          <h2 className="font-heading text-2xl sm:text-4xl lg:text-6xl font-bold mt-4 drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">
             {t('feat_title1')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-green to-accent-teal">{t('feat_title2')}</span>
           </h2>
-          <p className="text-muted-dim mt-4 max-w-2xl mx-auto text-lg">
+          <p className="text-muted-dim mt-3 sm:mt-4 max-w-2xl mx-auto text-sm sm:text-base lg:text-lg px-2 sm:px-0">
             {t('feat_desc')}
           </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
           {features.map((f, i) => (
             <FeatureCard key={i} feature={f} index={i} />
           ))}
@@ -80,14 +81,20 @@ function FeatureCard({ feature, index }: { feature: typeof features[0]; index: n
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile('ontouchstart' in window || navigator.maxTouchPoints > 0 || window.innerWidth < 768);
+  }, []);
 
   const mouseXSpring = useSpring(x, { stiffness: 300, damping: 30 });
   const mouseYSpring = useSpring(y, { stiffness: 300, damping: 30 });
 
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["15deg", "-15deg"]);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-15deg", "15deg"]);
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["10deg", "-10deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-10deg", "10deg"]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isMobile) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const width = rect.width;
     const height = rect.height;
@@ -115,7 +122,7 @@ function FeatureCard({ feature, index }: { feature: typeof features[0]; index: n
       <motion.div
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        style={{
+        style={isMobile ? {} : {
           rotateX,
           rotateY,
           transformStyle: "preserve-3d",
@@ -124,7 +131,7 @@ function FeatureCard({ feature, index }: { feature: typeof features[0]; index: n
       >
         <Link
           href={feature.href}
-          className="block glass rounded-3xl p-8 group relative overflow-hidden h-full border border-white/10 hover:border-white/30 transition-all duration-500 shadow-[0_10px_40px_rgba(0,0,0,0.5)] transform-gpu"
+          className="block glass rounded-2xl sm:rounded-3xl p-5 sm:p-6 lg:p-8 group relative overflow-hidden h-full border border-white/10 hover:border-white/30 transition-all duration-500 shadow-[0_10px_40px_rgba(0,0,0,0.5)] transform-gpu"
         >
           {/* Hover Glow Background */}
           <div 
@@ -141,7 +148,7 @@ function FeatureCard({ feature, index }: { feature: typeof features[0]; index: n
           <div style={{ transform: "translateZ(60px)", transformStyle: "preserve-3d" }} className="flex flex-col h-full pointer-events-none">
             {/* Tag */}
             <span
-              className="inline-block text-[10px] font-heading font-black tracking-[3px] px-3 py-1.5 rounded-full mb-8 relative w-max"
+              className="inline-block text-[10px] font-heading font-black tracking-[3px] px-3 py-1.5 rounded-full mb-4 sm:mb-6 lg:mb-8 relative w-max"
               style={{
                 background: `${rgba}0.15)`,
                 color: `${rgba}1)`,
@@ -153,11 +160,11 @@ function FeatureCard({ feature, index }: { feature: typeof features[0]; index: n
               {feature.tag}
             </span>
 
-            <span className="text-5xl block mb-6 relative group-hover:-translate-y-2 transition-transform duration-300 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]" style={{ transform: "translateZ(70px)" }}>{feature.icon}</span>
-            <h3 className="font-heading text-2xl font-bold mb-4 text-white relative" style={{ transform: "translateZ(50px)" }}>{feature.title}</h3>
-            <p className="text-muted-dim leading-relaxed mb-8 relative" style={{ transform: "translateZ(40px)" }}>{feature.desc}</p>
+            <span className="text-3xl sm:text-4xl lg:text-5xl block mb-3 sm:mb-4 lg:mb-6 relative group-hover:-translate-y-2 transition-transform duration-300 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]" style={{ transform: "translateZ(70px)" }}>{feature.icon}</span>
+            <h3 className="font-heading text-lg sm:text-xl lg:text-2xl font-bold mb-2 sm:mb-3 lg:mb-4 text-white relative" style={{ transform: "translateZ(50px)" }}>{feature.title}</h3>
+            <p className="text-sm sm:text-base text-muted-dim leading-relaxed mb-4 sm:mb-6 lg:mb-8 relative" style={{ transform: "translateZ(40px)" }}>{feature.desc}</p>
 
-            <div className="flex items-center justify-between mt-auto pt-6 border-t border-white/10 relative" style={{ transform: "translateZ(30px)" }}>
+            <div className="flex items-center justify-between mt-auto pt-3 sm:pt-4 lg:pt-6 border-t border-white/10 relative" style={{ transform: "translateZ(30px)" }}>
               <span className="text-sm font-heading tracking-widest uppercase text-muted-dim">{feature.stats}</span>
               <span
                 className="text-sm font-heading font-bold uppercase tracking-wider group-hover:translate-x-2 transition-transform duration-300 pointer-events-auto"

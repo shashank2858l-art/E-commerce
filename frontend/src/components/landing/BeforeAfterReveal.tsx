@@ -20,14 +20,20 @@ export default function BeforeAfterReveal({
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number | null>(null);
 
   const handleMove = (clientX: number) => {
     if (!containerRef.current) return;
-    
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
-    const percent = Math.max(0, Math.min((x / rect.width) * 100, 100));
-    setSliderPosition(percent);
+    // RAF-throttle to prevent setState on every pixel
+    if (rafRef.current) return;
+    rafRef.current = requestAnimationFrame(() => {
+      if (!containerRef.current) { rafRef.current = null; return; }
+      const rect = containerRef.current.getBoundingClientRect();
+      const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
+      const percent = Math.max(0, Math.min((x / rect.width) * 100, 100));
+      setSliderPosition(percent);
+      rafRef.current = null;
+    });
   };
 
   const onMouseMove = (e: MouseEvent<HTMLDivElement>) => {
@@ -60,6 +66,7 @@ export default function BeforeAfterReveal({
     return () => {
       window.removeEventListener('mouseup', stopDragging);
       window.removeEventListener('touchend', stopDragging);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, []);
 
@@ -97,7 +104,7 @@ export default function BeforeAfterReveal({
               fill 
               className="object-cover" 
               sizes="(max-width: 768px) 100vw, 1024px"
-              priority
+              loading="lazy"
             />
             {/* After Label */}
             <div className="absolute top-4 right-4 z-10 pointer-events-none">
@@ -109,7 +116,7 @@ export default function BeforeAfterReveal({
 
           {/* Overlay: BEFORE Image (Left side controlled by clip-path) */}
           <div 
-            className="absolute inset-0 z-10 pointer-events-none"
+            className="absolute inset-0 z-10 pointer-events-none will-change-[clip-path]"
             style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
           >
             <Image 
@@ -118,7 +125,7 @@ export default function BeforeAfterReveal({
               fill 
               className="object-cover relative z-0"
               sizes="(max-width: 768px) 100vw, 1024px"
-              priority
+              loading="lazy"
             />
             <div className="absolute inset-0 bg-black/10 z-10" />
             

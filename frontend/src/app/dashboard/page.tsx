@@ -1,16 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'framer-motion';
 import { currentUser as mockUser, badges as mockBadges, recentActivity as mockActivity, weeklyData as mockWeekly, cartItems as mockCart, listings as mockListings } from '@/data/mock-data';
 import { fetchFromApi } from '@/utils/api';
 import { supabase } from '@/utils/supabase';
-import BuyModeView from '@/components/dashboard/BuyModeView';
-import SellModeView from '@/components/dashboard/SellModeView';
-import MembershipView from '@/components/dashboard/MembershipView';
-import DashboardAIInsights from '@/components/dashboard/DashboardAIInsights';
+
+// Lazy-load heavy dashboard sub-views — only one visible at a time
+const BuyModeView = dynamic(() => import('@/components/dashboard/BuyModeView'));
+const SellModeView = dynamic(() => import('@/components/dashboard/SellModeView'));
+const MembershipView = dynamic(() => import('@/components/dashboard/MembershipView'));
+const DashboardAIInsights = dynamic(() => import('@/components/dashboard/DashboardAIInsights'));
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -140,30 +143,29 @@ export default function DashboardPage() {
     load();
   }, []);
 
-  const totalCarbon = cartItems.reduce((s, i) => s + i.carbonKg * i.quantity, 0);
-  const altCarbon = cartItems.reduce((s, i) => s + (i.greenAltCarbonKg || i.carbonKg) * i.quantity, 0);
+  const totalCarbon = useMemo(() => cartItems.reduce((s, i) => s + i.carbonKg * i.quantity, 0), [cartItems]);
+  const altCarbon = useMemo(() => cartItems.reduce((s, i) => s + (i.greenAltCarbonKg || i.carbonKg) * i.quantity, 0), [cartItems]);
   const savings = totalCarbon - altCarbon;
-  const maxWeekly = Math.max(...weeklyData.map((d) => d.co2));
+  const maxWeekly = useMemo(() => Math.max(...weeklyData.map((d) => d.co2)), [weeklyData]);
 
   // Determine tier dynamically from the global activityScore OR explicit user override
-  const derivedTier = currentUser.membershipTier || (activityScore >= 2000 ? 'gold' : activityScore >= 500 ? 'silver' : 'bronze');
+  const derivedTier = useMemo(() => currentUser.membershipTier || (activityScore >= 2000 ? 'gold' : activityScore >= 500 ? 'silver' : 'bronze'), [currentUser.membershipTier, activityScore]);
 
-  const getTierColor = (tier: string) => {
-    switch (tier) {
-      case 'gold': return '#FFC800'; // accent-gold but brighter
-      case 'silver': return '#0DFFC6'; // accent-teal
-      case 'bronze': return '#FF6B35'; // accent-orange
+  const tierColor = useMemo(() => {
+    switch (derivedTier) {
+      case 'gold': return '#FFC800';
+      case 'silver': return '#0DFFC6';
+      case 'bronze': return '#FF6B35';
       default: return '#39FF14';
     }
-  };
-  const tierColor = getTierColor(derivedTier);
+  }, [derivedTier]);
 
-  const handleAction = (points: number) => {
+  const handleAction = useCallback((points: number) => {
     setActivityScore(prev => prev + points);
-  };
+  }, []);
 
   return (
-    <div className="min-h-screen pt-24 pb-16">
+    <div className="min-h-screen pt-20 sm:pt-24 pb-10 sm:pb-16">
       <div className="section-container">
         {/* Header & Mode Toggles */}
         <AnimatePresence mode="wait">
@@ -218,8 +220,8 @@ export default function DashboardPage() {
           )}
         </AnimatePresence>
 
-        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6 relative z-10">
-          <div className="flex items-center gap-4">
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="mb-6 sm:mb-8 lg:mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 relative z-10">
+          <div className="flex items-center gap-3 sm:gap-4">
             <div className="relative">
                {/* Animated Circular Progress Badge around avatar */}
                <svg className="absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)] rotate-[-90deg]">
@@ -230,31 +232,31 @@ export default function DashboardPage() {
                    strokeDasharray={`${(activityScore / 5000) * 150} 150`} 
                  />
                </svg>
-               <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-surface-high to-surface-mid flex items-center justify-center font-heading font-bold text-lg relative z-10 shadow-[0_0_15px_rgba(0,0,0,0.5)]" style={{ color: tierColor, border: `1px solid ${tierColor}40` }}>
+               <div className="w-11 h-11 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-surface-high to-surface-mid flex items-center justify-center font-heading font-bold text-base sm:text-lg relative z-10 shadow-[0_0_15px_rgba(0,0,0,0.5)]" style={{ color: tierColor, border: `1px solid ${tierColor}40` }}>
                  {currentUser.avatar}
                </div>
             </div>
             
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="font-heading text-3xl font-bold">Welcome, {currentUser.name.split(' ')[0]}</h1>
+                <h1 className="font-heading text-xl sm:text-2xl lg:text-3xl font-bold">Welcome, {currentUser.name.split(' ')[0]}</h1>
                 <span className="px-2 py-0.5 text-[10px] font-heading font-bold tracking-widest uppercase rounded bg-surface-high" style={{ color: tierColor, border: `1px solid ${tierColor}40` }}>
                   {derivedTier} Member
                 </span>
               </div>
-              <p className="text-sm text-muted mt-1">🔥 {currentUser.streak}-day streak · Level {Math.floor(activityScore / 500) + 1}</p>
+              <p className="text-xs sm:text-sm text-muted mt-0.5 sm:mt-1">🔥 {currentUser.streak}-day streak · Level {Math.floor(activityScore / 500) + 1}</p>
             </div>
           </div>
           
           {/* Header Controls */}
-          <div className="flex flex-col md:flex-row items-end gap-4 relative z-20">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-3 sm:gap-4 relative z-20">
             {/* Mode Toggles */}
-            <div className="flex bg-surface-high/50 p-1 rounded-xl glass border border-white/5 relative z-20 flex-wrap">
+            <div className="flex bg-surface-high/50 p-1 rounded-xl glass border border-white/5 relative z-20 w-full max-w-full overflow-x-auto snap-x scrollbar-hide flex-nowrap md:w-fit">
             {(['overview', 'buy', 'sell', 'rent', 'swap', 'membership'] as const).map((mode) => (
               <button
                 key={mode}
                 onClick={() => setViewMode(mode)}
-                className={`relative px-4 py-2 text-xs font-heading tracking-widest uppercase font-bold rounded-lg transition-colors ${
+                className={`relative px-4 py-2 text-xs font-heading tracking-widest uppercase font-bold rounded-lg transition-colors flex-shrink-0 snap-start ${
                   viewMode === mode ? 'text-black' : 'text-muted-dim hover:text-white'
                 }`}
               >
@@ -293,19 +295,19 @@ export default function DashboardPage() {
               transition={{ duration: 0.3 }}
             >
               {/* Impact row */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
                 {[
                   { label: 'CO₂ Saved', value: `${currentUser.co2Saved}kg`, icon: '🌱', color: '#39FF14' },
                   { label: 'Items Reused', value: currentUser.itemsReused, icon: '♻️', color: '#0DFFC6' },
                   { label: 'Food Rescued', value: currentUser.foodRescued, icon: '🍱', color: '#FF6B35' },
                   { label: 'Waste Diverted', value: `${currentUser.wasteDiverted}kg`, icon: '🔧', color: '#BF5AF2' },
                 ].map((stat, i) => (
-                  <div key={i} className="glass rounded-2xl p-5 group hover:border-white/10 transition-all">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-2xl">{stat.icon}</span>
-                      <span className="text-[10px] font-heading tracking-widest uppercase text-muted-dim">{stat.label}</span>
+                  <div key={i} className="glass rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-5 group hover:border-white/10 transition-all">
+                    <div className="flex items-center justify-between mb-2 sm:mb-3">
+                      <span className="text-lg sm:text-2xl">{stat.icon}</span>
+                      <span className="text-[9px] sm:text-[10px] font-heading tracking-widest uppercase text-muted-dim">{stat.label}</span>
                     </div>
-                    <span className="font-heading text-2xl font-bold" style={{ color: stat.color }}>{stat.value}</span>
+                    <span className="font-heading text-lg sm:text-xl lg:text-2xl font-bold" style={{ color: stat.color }}>{stat.value}</span>
                   </div>
                 ))}
               </div>
@@ -318,7 +320,7 @@ export default function DashboardPage() {
                   wasteDiverted: currentUser.wasteDiverted
               }} />
 
-              <div className="grid lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
                 {/* Left: Score + Carbon + Weekly */}
                 <div className="lg:col-span-2 flex flex-col gap-6">
                   {/* Sustainability Score */}

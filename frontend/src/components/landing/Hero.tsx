@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { useLanguage } from '@/context/LanguageContext';
@@ -15,33 +15,50 @@ export default function Hero() {
   const { t } = useLanguage();
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isScanning, setIsScanning] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
+    // Detect touch device — skip mouse tracking entirely
+    const touch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    setIsMobile(touch || window.innerWidth < 768);
+    if (touch || window.innerWidth < 768) return;
+
     const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({
-        x: (e.clientX / window.innerWidth) * 2 - 1,
-        y: (e.clientY / window.innerHeight) * 2 - 1,
+      // RAF-throttle: only update once per frame
+      if (rafRef.current) return;
+      rafRef.current = requestAnimationFrame(() => {
+        setMousePosition({
+          x: (e.clientX / window.innerWidth) * 2 - 1,
+          y: (e.clientY / window.innerHeight) * 2 - 1,
+        });
+        rafRef.current = null;
       });
     };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
   }, []);
 
   return (
     <>
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
-      {/* Background Interactive Glow */}
+      <section className="relative min-h-[100dvh] lg:min-h-screen flex items-center justify-center overflow-hidden bg-background">
+      {/* Background Interactive Glow — disabled on mobile for performance */}
+      {!isMobile && (
       <motion.div
         animate={{
           x: mousePosition.x * 50,
           y: mousePosition.y * 50,
         }}
         transition={{ type: 'spring', damping: 50, stiffness: 200, mass: 0.5 }}
-        className="absolute inset-0 pointer-events-none z-0"
+        className="absolute inset-0 pointer-events-none z-0 will-change-transform transform-gpu"
       >
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] md:w-[40vw] md:h-[40vw] rounded-full bg-neon-green/5 blur-[120px]" />
         <div className="absolute top-1/4 left-1/3 w-[50vw] h-[50vw] md:w-[30vw] md:h-[30vw] rounded-full bg-accent-teal/10 blur-[150px]" />
       </motion.div>
+      )}
 
       {/* Grid pattern */}
       <div
@@ -54,15 +71,15 @@ export default function Hero() {
       />
 
       {/* Main Content Layout */}
-      <div className="section-container relative z-10 w-full pt-32 pb-20">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+      <div className="section-container relative z-10 w-full pt-24 pb-12 sm:pt-28 sm:pb-16 lg:pt-32 lg:pb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
           
           {/* Left Text Content */}
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col gap-8 max-w-2xl"
+            className="flex flex-col gap-5 sm:gap-6 lg:gap-8 max-w-2xl text-center lg:text-left items-center lg:items-start"
           >
             {/* Super Badge */}
             <motion.div
@@ -81,7 +98,7 @@ export default function Hero() {
             </motion.div>
 
             {/* Headline */}
-            <h1 className="font-heading text-5xl sm:text-6xl lg:text-[5.5rem] font-black leading-[1.05] tracking-tight">
+            <h1 className="font-heading text-3xl sm:text-5xl md:text-6xl lg:text-[5.5rem] font-black leading-[1.1] sm:leading-[1.05] tracking-tight">
               {t('hero_title1')}
               <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-green via-accent-teal to-neon-green bg-[length:200%_auto] animate-[gradient-x_3s_ease_infinite] drop-shadow-[0_0_15px_rgba(57,255,20,0.4)] relative">
@@ -92,15 +109,15 @@ export default function Hero() {
             </h1>
 
             {/* Subhead */}
-            <p className="text-lg text-muted-dim leading-relaxed max-w-xl font-medium border-l-2 border-white/10 pl-6">
+            <p className="text-sm sm:text-base lg:text-lg text-muted-dim leading-relaxed max-w-xl font-medium border-l-2 border-white/10 pl-4 sm:pl-6 text-left">
               {t('hero_desc')}
             </p>
 
             {/* CTA Group */}
-            <div className="flex flex-wrap items-center gap-5 pt-4">
+            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 pt-4 w-full sm:w-auto">
               <Link
                 href="/login"
-                className="group relative inline-flex items-center gap-3 px-8 py-4 font-heading text-sm font-bold tracking-widest uppercase bg-neon-green text-black rounded-xl overflow-hidden hover:scale-105 transition-all duration-300 shadow-[0_0_20px_rgba(57,255,20,0.2)] hover:shadow-[0_0_30px_rgba(57,255,20,0.4)]"
+                className="w-full sm:w-auto justify-center group relative inline-flex items-center gap-3 px-8 py-4 font-heading text-sm font-bold tracking-widest uppercase bg-neon-green text-black rounded-xl overflow-hidden hover:scale-105 transition-all duration-300 shadow-[0_0_20px_rgba(57,255,20,0.2)] hover:shadow-[0_0_30px_rgba(57,255,20,0.4)]"
               >
                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
                 <span className="relative z-10 flex items-center gap-2">
@@ -111,7 +128,7 @@ export default function Hero() {
 
               <button
                 onClick={() => setIsScanning(true)}
-                className="group inline-flex items-center gap-3 px-8 py-4 font-heading text-sm font-bold tracking-widest uppercase text-white glass border border-white/10 rounded-xl hover:border-accent-teal/50 transition-all duration-300"
+                className="w-full sm:w-auto justify-center group inline-flex items-center gap-3 px-8 py-4 font-heading text-sm font-bold tracking-widest uppercase text-white glass border border-white/10 rounded-xl hover:border-accent-teal/50 transition-all duration-300"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-accent-teal group-hover:scale-110 transition-transform">
                   <path d="M4 4h4v4H4zM16 4h4v4h-4zM4 16h4v4H4z"/>
@@ -127,19 +144,19 @@ export default function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 1 }}
-            className="relative hidden lg:flex items-center justify-center min-h-[500px]"
+            className="relative flex items-center justify-center min-h-[250px] sm:min-h-[350px] lg:min-h-[500px] mx-auto w-full max-w-[280px] sm:max-w-[400px] lg:max-w-none"
           >
             {/* Central glowing core container */}
             <motion.div 
-              animate={{ 
+              animate={isMobile ? {} : { 
                 rotateX: mousePosition.y * 15,
                 rotateY: mousePosition.x * 15 
               }}
               style={{ perspective: 1000 }}
-              className="relative w-full aspect-square max-w-[500px] flex items-center justify-center transform-gpu"
+              className="relative w-full aspect-square max-w-[220px] sm:max-w-[320px] lg:max-w-[500px] flex items-center justify-center transform-gpu will-change-transform"
             >
               {/* Geometric Core Object */}
-              <div className="relative w-64 h-64">
+              <div className="relative w-40 h-40 sm:w-52 sm:h-52 lg:w-64 lg:h-64">
                 <motion.div 
                   animate={{ y: [-10, 10, -10], rotateZ: [0, 5, -5, 0] }} 
                   transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
@@ -162,17 +179,17 @@ export default function Hero() {
                 
                 {/* Floating elements around the core */}
                 {[
-                  { label: "SELL", offset: "-top-6 -right-6", delay: 0 },
-                  { label: "BUY", offset: "top-1/2 -left-12", delay: 1 },
-                  { label: "EARN", offset: "-bottom-8 right-10", delay: 2 }
+                  { label: "SELL", offset: "-top-4 -right-4 sm:-top-6 sm:-right-6", delay: 0 },
+                  { label: "BUY", offset: "top-1/2 -left-8 sm:-left-12", delay: 1 },
+                  { label: "EARN", offset: "-bottom-6 right-6 sm:-bottom-8 sm:right-10", delay: 2 }
                 ].map((item, i) => (
                   <motion.div
                     key={i}
                     animate={{ y: [-15, 15, -15] }}
                     transition={{ repeat: Infinity, duration: 4, delay: item.delay, ease: "easeInOut" }}
-                    className={`absolute ${item.offset} z-20 glass px-4 py-2 rounded-xl border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur-md`}
+                    className={`absolute ${item.offset} z-20 glass px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur-md`}
                   >
-                    <span className="text-xs font-heading font-black tracking-widest text-neon-green drop-shadow-[0_0_5px_rgba(57,255,20,0.5)]">{item.label}</span>
+                    <span className="text-[10px] sm:text-xs font-heading font-black tracking-widest text-neon-green drop-shadow-[0_0_5px_rgba(57,255,20,0.5)]">{item.label}</span>
                   </motion.div>
                 ))}
               </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { fetchFromApi } from '@/utils/api';
 import { ListingType, ListingItem } from '@/types';
@@ -24,6 +24,14 @@ function MarketplaceContent() {
   const [listings, setListings] = useState<ListingItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const handleSelectItem = useCallback((item: ListingItem) => {
+    setSelectedItem(item);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setSelectedItem(null);
+  }, []);
 
   const [filters, setFilters] = useState<FilterState>({
     category: 'all',
@@ -173,7 +181,7 @@ function MarketplaceContent() {
   }, [activeTab, search, filters, listings]);
 
   return (
-    <div className="min-h-screen pt-24 pb-16">
+    <div className="min-h-screen pt-20 sm:pt-24 pb-10 sm:pb-16">
       <div className="section-container">
 
         {errorMsg && (
@@ -189,15 +197,15 @@ function MarketplaceContent() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <h1 className="font-heading text-4xl font-bold mb-2">
+            <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold mb-1 sm:mb-2">
               {t('mkt_title')}
             </h1>
-            <p className="text-muted">
+            <p className="text-muted text-sm sm:text-base">
               {t('mkt_desc').replace('{count}', listings.length.toString())}
             </p>
           </motion.div>
 
-          <div className="flex gap-4">
+          <div className="flex gap-3 sm:gap-4 w-full md:w-auto">
             <button
               onClick={() => setIsSidebarOpen(true)}
               className="lg:hidden glass px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-heading font-semibold tracking-wider hover:bg-white/5 border border-white/5"
@@ -205,7 +213,7 @@ function MarketplaceContent() {
               <span>⚙️</span> Filters
             </button>
 
-            <div className="relative flex-1 md:w-64">
+            <div className="relative flex-1 min-w-0">
               <svg className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-dim" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
               </svg>
@@ -220,17 +228,17 @@ function MarketplaceContent() {
           </div>
         </div>
 
-        <div className="flex gap-8">
+        <div className="flex gap-4 lg:gap-8">
           <FilterSidebar filters={filters} setFilters={setFilters} isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
           <div className="flex-1 w-full min-w-0">
             {/* Context Tabs Header */}
-            <div className="flex gap-2 mb-8 bg-surface-mid/50 p-1 w-fit border border-white/5 rounded-2xl relative overflow-hidden pointer-events-auto">
+            <div className="flex gap-2 mb-8 bg-surface-mid/50 p-1 w-full max-w-full overflow-x-auto snap-x scrollbar-hide md:w-fit border border-white/5 rounded-2xl relative pointer-events-auto">
               {(['buy', 'rent', 'swap', 'upcycle'] as const).map(tab => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`relative z-10 px-8 py-3 rounded-xl font-heading font-bold text-sm tracking-widest uppercase transition-colors duration-300 ${activeTab === tab ? 'text-black' : 'text-muted hover:text-white'}`}
+                  className={`relative z-10 px-6 sm:px-8 py-3 rounded-xl font-heading font-bold text-xs sm:text-sm tracking-widest uppercase transition-colors duration-300 flex-shrink-0 snap-start ${activeTab === tab ? 'text-black' : 'text-muted hover:text-white'}`}
                 >
                   {activeTab === tab && (
                     <motion.div layoutId="mkt-tab-pill" className="absolute inset-0 bg-neon-green -z-10 rounded-xl max-w-full shadow-[0_0_15px_rgba(57,255,20,0.3)]" />
@@ -242,13 +250,13 @@ function MarketplaceContent() {
 
             {/* Grid */}
             {filtered.length > 0 ? (
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {filtered.map((item, i) => (
                   <ListingCard
                     key={item.id}
                     item={item}
                     index={i}
-                    onClick={() => setSelectedItem(item)}
+                    onClick={() => handleSelectItem(item)}
                   />
                 ))}
               </div>
@@ -282,7 +290,7 @@ function MarketplaceContent() {
       </div>
 
       {/* Detail Modal */}
-      <DetailModal item={selectedItem} onClose={() => setSelectedItem(null)} />
+      <DetailModal item={selectedItem} onClose={handleCloseModal} />
 
       <Testimonials />
     </div>

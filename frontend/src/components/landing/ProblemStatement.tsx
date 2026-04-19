@@ -22,7 +22,7 @@ export default function ProblemStatement() {
   const solutionScale = useTransform(scrollYProgress, [0.4, 0.8], [0.95, 1]);
 
   return (
-    <section ref={containerRef} className="relative h-[200vh] bg-background">
+    <section ref={containerRef} className="relative h-[150vh] sm:h-[180vh] lg:h-[200vh] bg-background">
       {/* Sticky Container */}
       <div className="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden">
         
@@ -46,24 +46,24 @@ export default function ProblemStatement() {
             <span className="inline-block text-xs font-heading font-semibold tracking-[4px] uppercase text-accent-red mb-4 px-4 py-1 rounded-full bg-accent-red/10 border border-accent-red/20 shadow-[0_0_15px_rgba(255,77,77,0.2)]">
               {t('prob_reality_badge')}
             </span>
-            <h2 className="font-heading text-4xl lg:text-6xl font-bold mt-4 leading-tight">
+            <h2 className="font-heading text-2xl sm:text-4xl lg:text-6xl font-bold mt-4 leading-tight">
               <span className="text-accent-red/90 drop-shadow-[0_0_10px_rgba(255,77,77,0.3)]">{t('prob_reality_title1')}</span> {t('prob_reality_title2')}
             </h2>
-          <p className="text-lg text-muted mt-6 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-sm sm:text-base lg:text-lg text-muted mt-4 sm:mt-6 max-w-2xl mx-auto leading-relaxed px-2 sm:px-0">
             {t('prob_reality_desc')}
           </p>
 
-          <div className="grid sm:grid-cols-3 gap-6 mt-12 w-full max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mt-8 sm:mt-12 w-full max-w-5xl mx-auto px-2 sm:px-0">
             {[
               { stat: t('prob_stat1_title'), label: t('prob_stat1_desc'), color: '#FF6B35' },
               { stat: t('prob_stat2_title'), label: t('prob_stat2_desc'), color: '#FF4D4D' },
               { stat: t('prob_stat3_title'), label: t('prob_stat3_desc'), color: '#BF5AF2' },
             ].map((item, i) => (
-              <div key={i} className="glass rounded-xl p-6 border-t border-accent-red/10 shadow-[0_10px_30px_rgba(255,77,77,0.05)]">
-                <span className="font-heading text-4xl font-black block" style={{ color: item.color }}>
+              <div key={i} className="glass rounded-xl p-4 sm:p-6 border-t border-accent-red/10 shadow-[0_10px_30px_rgba(255,77,77,0.05)]">
+                <span className="font-heading text-3xl sm:text-4xl font-black block" style={{ color: item.color }}>
                   {item.stat}
                 </span>
-                <span className="text-xs font-semibold tracking-wider text-muted-dim uppercase mt-3 block">{item.label}</span>
+                <span className="text-[10px] sm:text-xs font-semibold tracking-wider text-muted-dim uppercase mt-2 sm:mt-3 block">{item.label}</span>
               </div>
             ))}
           </div>
@@ -77,23 +77,23 @@ export default function ProblemStatement() {
             <span className="inline-block text-xs font-heading font-semibold tracking-[4px] uppercase text-neon-green mb-4 px-4 py-1 rounded-full bg-neon-green/10 border border-neon-green/20 shadow-[0_0_15px_rgba(57,255,20,0.2)]">
               {t('prob_sol_badge')}
             </span>
-            <h2 className="font-heading text-4xl lg:text-6xl font-bold mt-4 leading-tight">
+            <h2 className="font-heading text-2xl sm:text-4xl lg:text-6xl font-bold mt-4 leading-tight">
               {t('prob_sol_title1')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-green to-accent-teal drop-shadow-[0_0_15px_rgba(57,255,20,0.3)]">{t('prob_sol_title2')}</span>
           </h2>
-          <p className="text-lg text-muted mt-6 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-sm sm:text-base lg:text-lg text-muted mt-4 sm:mt-6 max-w-2xl mx-auto leading-relaxed px-2 sm:px-0">
             {t('prob_sol_desc')}
           </p>
 
-          <div className="grid sm:grid-cols-3 gap-6 mt-12 w-full max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mt-8 sm:mt-12 w-full max-w-5xl mx-auto px-2 sm:px-0">
             {[
               { title: t('prob_ben1_title'), icon: '🌍', desc: t('prob_ben1_desc') },
               { title: t('prob_ben2_title'), icon: '♻️', desc: t('prob_ben2_desc') },
               { title: t('prob_ben3_title'), icon: '💎', desc: t('prob_ben3_desc') },
             ].map((item, i) => (
-               <div key={i} className="glass rounded-2xl p-8 border border-neon-green/10 hover:border-neon-green/30 transition-colors shadow-[inset_0_0_20px_rgba(57,255,20,0.02)] group hover:-translate-y-1 duration-300">
-                 <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">{item.icon}</div>
-                 <h3 className="font-heading text-lg font-bold text-white mb-2">{item.title}</h3>
-                 <p className="text-sm text-muted-dim leading-relaxed">{item.desc}</p>
+               <div key={i} className="glass rounded-xl sm:rounded-2xl p-5 sm:p-8 border border-neon-green/10 hover:border-neon-green/30 transition-colors shadow-[inset_0_0_20px_rgba(57,255,20,0.02)] group hover:-translate-y-1 duration-300">
+                 <div className="text-3xl sm:text-4xl mb-2 sm:mb-4 group-hover:scale-110 transition-transform">{item.icon}</div>
+                 <h3 className="font-heading text-base sm:text-lg font-bold text-white mb-2">{item.title}</h3>
+                 <p className="text-xs sm:text-sm text-muted-dim leading-relaxed">{item.desc}</p>
                </div>
             ))}
           </div>

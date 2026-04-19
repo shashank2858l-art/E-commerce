@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Inter } from "next/font/google";
+import dynamic from "next/dynamic";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import FAQHelpline from "@/components/layout/FAQHelpline";
 import Preloader from "@/components/layout/Preloader";
-import CursorTrail from "@/components/common/CursorTrail";
-import Chatbot from "@/components/common/Chatbot";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { CurrencyProvider } from "@/context/CurrencyContext";
 import "./globals.css";
+
+// Lazy-load non-critical components that aren't needed for initial render
+const FAQHelpline = dynamic(() => import("@/components/layout/FAQHelpline"), { ssr: false });
+const CursorTrail = dynamic(() => import("@/components/common/CursorTrail"), { ssr: false });
+const Chatbot = dynamic(() => import("@/components/common/Chatbot"), { ssr: false });
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
